@@ -1,0 +1,848 @@
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --navy:#002060;--navy-mid:#1a3a7a;--navy-light:#e8edf8;
+  --sky:#00B0F0;--sky-light:#e6f7fe;
+  --teal:#0070C0;--teal-light:#e6f1fb;
+  --gold:#BA7517;--gold-light:#faeeda;
+  --green:#1a7a3a;--green-light:#e8f5ec;
+  --purple:#7030A0;--purple-light:#f0eafc;
+  --red:#a32d2d;--red-light:#fdf0f0;
+  --surface:#f2f4f9;--card:#fff;
+  --border:rgba(0,32,96,0.10);--border-strong:rgba(0,32,96,0.18);
+  --text:#1a1a2e;--text-sub:#5a6070;--text-muted:#9099aa;
+}
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--surface);min-height:100vh;}
+.shell{max-width:700px;margin:0 auto;}
+
+/* HEADER */
+.hdr{background:linear-gradient(135deg,#001848 0%,#002a7a 60%,#003399 100%);position:relative;overflow:hidden;}
+.hdr::before{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;background:rgba(0,176,240,0.12);border-radius:50%;}
+.hdr::after{content:'';position:absolute;bottom:-60px;left:-20px;width:220px;height:220px;background:rgba(255,255,255,0.04);border-radius:50%;}
+.hdr-top{display:flex;align-items:center;gap:14px;padding:20px 20px 16px;position:relative;z-index:1;}
+.hdr-logo{width:46px;height:46px;background:linear-gradient(135deg,var(--sky),#0088cc);border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;flex-shrink:0;box-shadow:0 4px 12px rgba(0,176,240,0.35);}
+.hdr-title{color:#fff;font-size:17px;font-weight:600;letter-spacing:-0.2px;}
+.hdr-sub{color:rgba(255,255,255,0.55);font-size:11px;margin-top:3px;letter-spacing:0.02em;}
+.hdr-badge{margin-left:auto;background:rgba(0,176,240,0.18);border:1px solid rgba(0,176,240,0.35);color:var(--sky);font-size:11px;font-weight:600;padding:5px 13px;border-radius:20px;white-space:nowrap;}
+.hdr-strip{height:3px;background:linear-gradient(90deg,var(--sky),#7b2fe8,var(--sky));position:relative;z-index:1;}
+.tabs{display:flex;border-top:1px solid rgba(255,255,255,0.08);background:rgba(0,0,0,0.22);position:relative;z-index:1;}
+.tab{flex:1;padding:12px 6px;display:flex;align-items:center;justify-content:center;gap:7px;font-size:12px;font-weight:500;color:rgba(255,255,255,0.45);cursor:pointer;border-bottom:2.5px solid transparent;transition:all 0.15s;user-select:none;letter-spacing:0.01em;}
+.tab i{font-size:15px;}
+.tab:hover{color:rgba(255,255,255,0.75);}
+.tab.on{color:#fff;border-bottom-color:var(--sky);}
+
+/* PANELS */
+.panel{display:none;padding:20px 16px 56px;}
+.panel.on{display:block;}
+
+/* SECTION HEADERS */
+.sh{display:flex;align-items:center;gap:10px;margin:24px 0 11px;}
+.sh:first-child{margin-top:0;}
+.sh-pill{background:var(--navy);color:#fff;font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:3px 10px;border-radius:20px;white-space:nowrap;}
+.sh-line{flex:1;height:1px;background:linear-gradient(90deg,var(--border-strong),transparent);}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:14px;box-shadow:0 2px 8px rgba(0,32,96,0.06);}
+.card.accent-sky{border-top:3px solid var(--sky);}
+.card.accent-gold{border-top:3px solid var(--gold);}
+.card.accent-purple{border-top:3px solid var(--purple);}
+.card.accent-teal{border-top:3px solid var(--teal);}
+.card.accent-navy{border-top:3px solid var(--navy);}
+.card.accent-green{border-top:3px solid var(--green);}
+
+/* FIELDS */
+.field{display:flex;flex-direction:column;gap:5px;}
+.flbl{font-size:11px;font-weight:600;color:var(--text-sub);display:flex;align-items:center;gap:5px;letter-spacing:0.02em;}
+.flbl i{font-size:13px;color:var(--sky);}
+.req{color:#e24b4a;margin-left:1px;}
+.field input,.field select,.field textarea{
+  width:100%;height:40px;padding:0 12px;
+  border:1.5px solid var(--border-strong);border-radius:9px;
+  font-size:13px;font-family:inherit;color:var(--text);
+  background:#fafbff;appearance:none;-webkit-appearance:none;outline:none;
+  transition:border-color 0.12s,box-shadow 0.12s,background 0.12s;
+}
+.field input:focus,.field select:focus,.field textarea:focus{
+  border-color:var(--sky);box-shadow:0 0 0 3px rgba(0,176,240,0.13);background:#fff;
+}
+.field textarea{height:76px;padding:10px 12px;resize:vertical;}
+.sw{position:relative;}
+.sw i.arr{position:absolute;right:11px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--text-muted);pointer-events:none;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:13px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:13px;}
+
+/* TOGGLE YES/NO */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:4px 0;}
+.toggle-lbl{font-size:13px;font-weight:500;color:var(--text);display:flex;align-items:center;gap:8px;}
+.toggle-lbl i{font-size:16px;color:var(--sky);}
+.toggle-wrap{display:flex;background:#f0f2f7;border-radius:8px;padding:3px;gap:3px;}
+.tgl{padding:5px 16px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--text-muted);transition:all 0.13s;font-family:inherit;}
+.tgl.yes.on{background:var(--green);color:#fff;box-shadow:0 2px 6px rgba(26,122,58,0.3);}
+.tgl.no.on{background:var(--red);color:#fff;box-shadow:0 2px 6px rgba(163,45,45,0.3);}
+.tgl:hover:not(.on){background:rgba(0,0,0,0.07);}
+
+/* STATUS BUTTONS */
+.sgrp{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.sbtn{padding:12px 6px;border-radius:11px;border:1.5px solid var(--border-strong);background:#fafbff;cursor:pointer;text-align:center;transition:all 0.13s;user-select:none;}
+.sbtn i{font-size:20px;display:block;margin:0 auto 6px;color:var(--text-muted);}
+.sbtn span{font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:0.02em;}
+.sbtn:hover{transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,0,0,0.08);}
+.sbtn.sp.on{background:var(--gold-light);border-color:var(--gold);box-shadow:0 3px 10px rgba(186,117,23,0.15);}
+.sbtn.sp.on i,.sbtn.sp.on span{color:var(--gold);}
+.sbtn.si.on{background:var(--teal-light);border-color:var(--teal);box-shadow:0 3px 10px rgba(0,112,192,0.15);}
+.sbtn.si.on i,.sbtn.si.on span{color:var(--teal);}
+.sbtn.sc.on{background:var(--green-light);border-color:var(--green);box-shadow:0 3px 10px rgba(26,122,58,0.15);}
+.sbtn.sc.on i,.sbtn.sc.on span{color:var(--green);}
+
+/* PILLS */
+.pills{display:flex;flex-wrap:wrap;gap:8px;}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:6px 13px;border-radius:20px;border:1.5px solid var(--border-strong);background:#fafbff;color:var(--text-sub);font-size:11px;font-weight:600;cursor:pointer;transition:all 0.12s;user-select:none;letter-spacing:0.01em;}
+.pill i{font-size:12px;}
+.pill.ins:hover{border-color:var(--purple);color:var(--purple);background:var(--purple-light);}
+.pill.ins.on{background:var(--purple);border-color:var(--purple);color:#fff;box-shadow:0 2px 8px rgba(112,48,160,0.25);}
+.pill.maj:hover{border-color:var(--navy);color:var(--navy);background:var(--navy-light);}
+.pill.maj.on{background:var(--navy);border-color:var(--navy);color:#fff;box-shadow:0 2px 8px rgba(0,32,96,0.25);}
+
+/* DROPZONE */
+.dz{border:2px dashed var(--border-strong);border-radius:12px;padding:24px 20px;text-align:center;cursor:pointer;transition:all 0.13s;background:linear-gradient(135deg,#fafbff,#f5f7ff);}
+.dz:hover,.dz.drag{border-color:var(--sky);background:var(--sky-light);}
+.dz i.dz-ic{font-size:28px;color:var(--sky);display:block;margin-bottom:8px;}
+.dz-t{font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px;}
+.dz-s{font-size:11px;color:var(--text-muted);}
+#fi{display:none;}
+.flist{display:flex;flex-direction:column;gap:7px;margin-top:10px;}
+.fitem{display:flex;align-items:center;gap:10px;padding:9px 13px;background:#fafbff;border:1px solid var(--border);border-radius:9px;transition:background 0.12s;}
+.fic{font-size:18px;color:var(--teal);flex-shrink:0;}
+.fnm{flex:1;font-size:12px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.fsz{font-size:11px;color:var(--text-muted);flex-shrink:0;}
+.fstat{font-size:11px;font-weight:600;flex-shrink:0;margin-left:4px;display:flex;align-items:center;gap:3px;}
+.fstat.uploading{color:var(--teal);}
+.fstat.done{color:var(--green);}
+.fstat.fail{color:var(--red);}
+.frm{font-size:16px;color:var(--text-muted);cursor:pointer;margin-left:4px;transition:color 0.12s;}
+.frm:hover{color:var(--red);}
+.flink{font-size:15px;color:var(--sky);margin-left:6px;text-decoration:none;flex-shrink:0;display:inline-flex;align-items:center;transition:color 0.12s;}
+.flink:hover{color:var(--teal);}
+.prog-wrap{width:100%;height:3px;background:var(--border);border-radius:2px;margin-top:5px;}
+.prog-bar{height:3px;background:linear-gradient(90deg,var(--sky),var(--teal));border-radius:2px;transition:width 0.3s;}
+
+/* BUTTONS */
+.brow{display:flex;gap:10px;margin-top:28px;}
+.bprimary{
+  flex:1;height:46px;
+  background:linear-gradient(135deg,var(--navy),#0038b8);
+  color:#fff;border:none;border-radius:11px;font-size:14px;font-weight:600;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:all 0.13s;font-family:inherit;letter-spacing:0.02em;
+  box-shadow:0 4px 14px rgba(0,32,96,0.3);
+}
+.bprimary:hover{background:linear-gradient(135deg,#1a3a7a,#0050d0);box-shadow:0 6px 18px rgba(0,32,96,0.38);transform:translateY(-1px);}
+.bprimary:active{transform:scale(0.98);}
+.bprimary:disabled{background:#b0b8cc;box-shadow:none;cursor:not-allowed;transform:none;}
+.bghost{height:46px;padding:0 20px;background:transparent;border:1.5px solid var(--border-strong);border-radius:11px;font-size:13px;color:var(--text-sub);cursor:pointer;display:flex;align-items:center;gap:7px;font-family:inherit;transition:all 0.12s;font-weight:500;}
+.bghost:hover{background:var(--navy-light);color:var(--navy);border-color:var(--navy);}
+
+/* ALERTS */
+.alert{display:none;padding:12px 14px;border-radius:10px;font-size:12px;align-items:flex-start;gap:9px;margin-top:14px;font-weight:500;}
+.alert.show{display:flex;}
+.alert i{font-size:16px;flex-shrink:0;margin-top:1px;}
+.alert.ok{background:var(--green-light);color:var(--green);border:1px solid rgba(26,122,58,0.2);}
+.alert.err{background:var(--red-light);color:var(--red);border:1px solid rgba(163,45,45,0.2);}
+.alert.info{background:var(--teal-light);color:var(--teal);border:1px solid rgba(0,112,192,0.2);}
+.alert.warn{background:var(--gold-light);color:var(--gold);border:1px solid rgba(186,117,23,0.2);}
+
+/* SPINNER */
+.spin{width:16px;height:16px;border:2.5px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.65s linear infinite;display:none;flex-shrink:0;}
+.spin.show{display:block;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* RESOURCES TAB */
+.lrow{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--border);}
+.lrow:last-child{border-bottom:none;}
+.lic{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.lic.dr{background:#e8f0fe;color:#1a73e8;}
+.lic.sh{background:#e6f4ea;color:#0f9d58;}
+.llbl{font-size:10px;color:var(--text-muted);margin-bottom:2px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;}
+.lnm{font-size:13px;font-weight:600;color:var(--text);}
+.lurl{font-size:12px;color:var(--teal);text-decoration:none;display:inline-flex;align-items:center;gap:4px;margin-top:3px;font-weight:500;}
+.lurl:hover{text-decoration:underline;}
+.logitem{padding:11px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.logitem:last-child{border-bottom:none;}
+.log-g{font-size:12px;font-weight:600;color:var(--text);}
+.log-m{font-size:11px;color:var(--text-muted);margin-top:2px;}
+.lbadge{font-size:10px;font-weight:600;padding:3px 10px;border-radius:12px;letter-spacing:0.02em;}
+.lbadge.p{background:var(--gold-light);color:var(--gold);}
+.lbadge.i{background:var(--teal-light);color:var(--teal);}
+.lbadge.c{background:var(--green-light);color:var(--green);}
+
+@media(max-width:480px){.g2,.g3{grid-template-columns:1fr;}.sgrp{grid-template-columns:1fr 1fr 1fr;}}
+</style>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css"/>
+
+<div class="shell">
+  <div class="hdr">
+    <div class="hdr-strip"></div>
+    <div class="hdr-top">
+      <div class="hdr-logo"><i class="ti ti-tool" aria-hidden="true"></i></div>
+      <div style="flex:1">
+        <div class="hdr-title">Corrective Maintenance</div>
+        <div class="hdr-sub">Field Engineering Operations · FEO</div>
+      </div>
+      <div class="hdr-badge" id="ecnt"><i class="ti ti-database" style="font-size:11px"></i> 0 entries</div>
+    </div>
+    <div class="tabs">
+      <div class="tab on" onclick="goTab('form')"><i class="ti ti-clipboard-text" aria-hidden="true"></i>CM Form</div>
+      <div class="tab" onclick="goTab('links')"><i class="ti ti-link" aria-hidden="true"></i>Resources</div>
+    </div>
+  </div>
+
+  <!-- FORM TAB -->
+  <div id="p-form" class="panel on">
+
+    <div class="sh"><span class="sh-pill">📋 Basic Info</span><div class="sh-line"></div></div>
+    <div class="card accent-sky">
+      <div class="g2">
+        <div class="field">
+          <div class="flbl"><i class="ti ti-calendar-event"></i>Date<span class="req">*</span></div>
+          <input type="date" id="f-date"/>
+        </div>
+        <div class="field">
+          <div class="flbl"><i class="ti ti-layout-grid"></i>Grid ID<span class="req">*</span></div>
+          <input type="text" id="f-grid" placeholder="e.g. G-14B"/>
+        </div>
+      </div>
+      <div class="g2">
+        <div class="field">
+          <div class="flbl"><i class="ti ti-map-pin"></i>Territory<span class="req">*</span></div>
+          <div class="sw">
+            <select id="f-terr">
+              <option value="">— Select —</option>
+              <option>T1</option><option>T2</option><option>T3</option>
+            </select>
+            <i class="ti ti-chevron-down arr"></i>
+          </div>
+        </div>
+        <div class="field">
+          <div class="flbl"><i class="ti ti-user-circle"></i>Tech Name<span class="req">*</span></div>
+          <input type="text" id="f-tech" placeholder="Full name"/>
+        </div>
+      </div>
+      <div class="g2">
+        <div class="field">
+          <div class="flbl"><i class="ti ti-building-skyscraper"></i>Grid Month</div>
+          <div class="sw">
+            <select id="f-gridmonth">
+              <option value="">— Select Month —</option>
+              <option>January</option><option>February</option><option>March</option>
+              <option>April</option><option>May</option><option>June</option>
+              <option>July</option><option>August</option><option>September</option>
+              <option>October</option><option>November</option><option>December</option>
+            </select>
+            <i class="ti ti-chevron-down arr"></i>
+          </div>
+        </div>
+        <div class="field" style="justify-content:flex-end;padding-bottom:2px;">
+          <div class="flbl"><i class="ti ti-network"></i>Google Circuit</div>
+          <div class="toggle-wrap" style="align-self:flex-start;margin-top:2px;">
+            <button class="tgl yes" id="gc-yes" onclick="pickGC('Yes')">Yes</button>
+            <button class="tgl no" id="gc-no" onclick="pickGC('No')">No</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sh"><span class="sh-pill">👷 Team &amp; Coordination</span><div class="sh-line"></div></div>
+    <div class="card accent-teal">
+      <div class="g2">
+        <div class="field">
+          <div class="flbl"><i class="ti ti-user-check"></i>Coordinator</div>
+          <input type="text" id="f-coordinator" placeholder="Project Coordinator"/>
+        </div>
+        <div class="field">
+          <div class="flbl"><i class="ti ti-users"></i>Team Leader</div>
+          <input type="text" id="f-teamleader" placeholder="Team leader's name"/>
+        </div>
+      </div>
+      <div class="field">
+        <div class="flbl"><i class="ti ti-clipboard-list"></i>Dispatched By</div>
+        <input type="text" id="f-dispatch" placeholder="Who dispatched the team"/>
+      </div>
+    </div>
+
+    <div class="sh"><span class="sh-pill">📍 Site &amp; Coordinates</span><div class="sh-line"></div></div>
+    <div class="card accent-sky">
+      <div class="g2">
+        <div class="field">
+          <div class="flbl"><i class="ti ti-map-pin"></i>Nearest Site</div>
+          <input type="text" id="f-nearestsite" placeholder="Nearest site to the activity"/>
+        </div>
+        <div class="field">
+          <div class="flbl"><i class="ti ti-map"></i>Location</div>
+          <input type="text" id="f-location" placeholder="Location of the activity"/>
+        </div>
+      </div>
+      <div class="g2">
+        <div class="field">
+          <div class="flbl"><i class="ti ti-compass"></i>Latitude</div>
+          <input type="text" id="f-lat" placeholder="e.g. 15.12345"/>
+        </div>
+        <div class="field">
+          <div class="flbl"><i class="ti ti-compass"></i>Longitude</div>
+          <input type="text" id="f-lng" placeholder="e.g. 120.12345"/>
+        </div>
+      </div>
+      <button class="bghost" id="geo-btn" type="button" onclick="useMyLocation()" style="align-self:flex-start;">
+        <i class="ti ti-current-location" id="geo-ic"></i>Use my location
+      </button>
+      <div id="geo-note" style="display:none;font-size:11px;color:var(--text-muted);margin-top:2px;"></div>
+    </div>
+
+    <div class="sh"><span class="sh-pill">📅 Key Dates</span><div class="sh-line"></div></div>
+    <div class="card accent-teal">
+      <div class="g3">
+        <div class="field">
+          <div class="flbl"><i class="ti ti-clipboard-check"></i>Actual Audit</div>
+          <input type="date" id="f-audit"/>
+        </div>
+        <div class="field">
+          <div class="flbl"><i class="ti ti-pencil"></i>Actual Redline</div>
+          <input type="date" id="f-redline"/>
+        </div>
+        <div class="field">
+          <div class="flbl"><i class="ti ti-tools"></i>Actual CM</div>
+          <input type="date" id="f-cmdate"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="sh"><span class="sh-pill">🚦 Work Status</span><div class="sh-line"></div></div>
+    <div class="card accent-gold">
+      <div class="sgrp">
+        <div class="sbtn sp" id="st-p" onclick="pickSt('Pending','p')">
+          <i class="ti ti-clock-pause"></i><span>Pending</span>
+        </div>
+        <div class="sbtn si" id="st-i" onclick="pickSt('In Progress','i')">
+          <i class="ti ti-player-play"></i><span>In Progress</span>
+        </div>
+        <div class="sbtn sc" id="st-c" onclick="pickSt('Completed','c')">
+          <i class="ti ti-circle-check"></i><span>Completed</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sh"><span class="sh-pill">🔧 Inscope Works</span><div class="sh-line"></div></div>
+    <div class="card accent-purple">
+      <div class="pills">
+        <span class="pill ins" data-v="Cable - regrooming, trimming, bunching, retention" onclick="tog(this)"><i class="ti ti-plug-connected"></i>Cable work</span>
+        <span class="pill ins" data-v="Closure cleanup, installation and replacement" onclick="tog(this)"><i class="ti ti-box"></i>Closure</span>
+        <span class="pill ins" data-v="NAP - rerouting, cover installation" onclick="tog(this)"><i class="ti ti-arrows-shuffle"></i>NAP rerouting</span>
+        <span class="pill ins" data-v="NAP regrooming and cleaning" onclick="tog(this)"><i class="ti ti-sparkles"></i>NAP regrooming</span>
+        <span class="pill ins" data-v="Tree Trimming / Vine Removal" onclick="tog(this)"><i class="ti ti-trees"></i>Tree / vine</span>
+        <span class="pill ins" data-v="NAP - Fix Hanging" onclick="tog(this)"><i class="ti ti-anchor"></i>NAP hanging</span>
+        <span class="pill ins" data-v="FLRP Rectification" onclick="tog(this)"><i class="ti ti-adjustments"></i>FLRP rectif.</span>
+        <span class="pill ins" data-v="Manhole - cleanup" onclick="tog(this)"><i class="ti ti-circle-dotted"></i>Manhole cleanup</span>
+      </div>
+    </div>
+
+    <div class="sh"><span class="sh-pill">⚡ Major Works</span><div class="sh-line"></div></div>
+    <div class="card accent-navy">
+      <div class="pills">
+        <span class="pill maj" data-v="Cable rerouting" onclick="tog(this)"><i class="ti ti-route"></i>Cable rerouting</span>
+        <span class="pill maj" data-v="Manhole - raising, relocation" onclick="tog(this)"><i class="ti ti-arrow-up-circle"></i>Manhole works</span>
+        <span class="pill maj" data-v="Service Box Installation" onclick="tog(this)"><i class="ti ti-package"></i>Service box</span>
+        <span class="pill maj" data-v="AE to UG" onclick="tog(this)"><i class="ti ti-arrow-down-right-circle"></i>AE to UG</span>
+        <span class="pill maj" data-v="Pole - changeout, relocation, accessories" onclick="tog(this)"><i class="ti ti-broadcast"></i>Pole works</span>
+      </div>
+    </div>
+
+    <div class="sh"><span class="sh-pill">🧰 Materials Used</span><div class="sh-line"></div></div>
+    <div class="card accent-sky">
+      <div class="g2">
+        <div class="field">
+          <div class="flbl"><i class="ti ti-package"></i>Material</div>
+          <input type="text" id="m-name" placeholder="e.g. Grounding Rod"/>
+        </div>
+        <div class="field">
+          <div class="flbl"><i class="ti ti-hash"></i>Quantity</div>
+          <input type="text" id="m-qty" placeholder="e.g. 1PC"/>
+        </div>
+      </div>
+      <button class="bghost" style="align-self:flex-start;" onclick="addMaterial()" type="button"><i class="ti ti-plus"></i>Add material</button>
+      <div class="flist" id="mlist"></div>
+    </div>
+
+    <div class="sh"><span class="sh-pill">📝 Remarks</span><div class="sh-line"></div></div>
+    <div class="card">
+      <div class="field">
+        <div class="flbl"><i class="ti ti-notes"></i>Additional Notes</div>
+        <textarea id="f-remarks" placeholder="Optional — site observations, issues, follow-ups…"></textarea>
+      </div>
+    </div>
+
+    <div class="sh"><span class="sh-pill">📷 Before / After Photos</span><div class="sh-line"></div></div>
+    <div class="card accent-green">
+      <div class="g2">
+        <div class="field">
+          <div class="flbl"><i class="ti ti-camera"></i>Before</div>
+          <div class="dz" id="dz-before" onclick="document.getElementById('fi-before').click()" ondragover="dzOvCat(event,'before')" ondragleave="dzOutCat('before')" ondrop="dzDpCat(event,'before')">
+            <i class="ti ti-cloud-upload dz-ic"></i>
+            <div class="dz-t">Tap or drag before photos</div>
+            <div class="dz-s">Photos only · Max 10 MB each</div>
+          </div>
+          <input type="file" id="fi-before" multiple accept="image/*" onchange="addFilesCat('before',this.files)"/>
+          <div class="flist" id="flist-before"></div>
+        </div>
+        <div class="field">
+          <div class="flbl"><i class="ti ti-camera"></i>After</div>
+          <div class="dz" id="dz-after" onclick="document.getElementById('fi-after').click()" ondragover="dzOvCat(event,'after')" ondragleave="dzOutCat('after')" ondrop="dzDpCat(event,'after')">
+            <i class="ti ti-cloud-upload dz-ic"></i>
+            <div class="dz-t">Tap or drag after photos</div>
+            <div class="dz-s">Photos only · Max 10 MB each</div>
+          </div>
+          <input type="file" id="fi-after" multiple accept="image/*" onchange="addFilesCat('after',this.files)"/>
+          <div class="flist" id="flist-after"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sh"><span class="sh-pill">📎 Attachments</span><div class="sh-line"></div></div>
+    <div class="card accent-green">
+      <div class="dz" id="dz" onclick="document.getElementById('fi').click()" ondragover="dzOv(event)" ondragleave="dzOut()" ondrop="dzDp(event)">
+        <i class="ti ti-cloud-upload dz-ic"></i>
+        <div class="dz-t">Tap or drag to attach files</div>
+        <div class="dz-s">Photos, PDFs, Excel · Max 10 MB each · Uploads automatically on submit</div>
+      </div>
+      <input type="file" id="fi" multiple accept="image/*,.pdf,.doc,.docx,.xlsx" onchange="addFiles(this.files)"/>
+      <div class="flist" id="flist"></div>
+    </div>
+
+    <div class="brow">
+      <button class="bghost" onclick="clearAll()"><i class="ti ti-refresh"></i>Clear</button>
+      <button class="bprimary" id="btn-sub" onclick="doSubmit()">
+        <div class="spin" id="spin"></div>
+        <i class="ti ti-send" id="sub-ico"></i>
+        <span id="sub-lbl">Save CM Entry</span>
+      </button>
+    </div>
+    <div id="sub-status" class="alert" style="margin-top:10px;"></div>
+    <div class="alert" id="alert" style="margin-top:6px;"></div>
+  </div>
+
+  <!-- RESOURCES TAB -->
+  <div id="p-links" class="panel">
+    <div class="sh"><span class="sh-pill">🔗 Connected Resources</span><div class="sh-line"></div></div>
+    <div class="card">
+      <div class="lrow">
+        <div class="lic dr"><i class="ti ti-folder-filled"></i></div>
+        <div style="flex:1">
+          <div class="llbl">Google Drive</div>
+          <div class="lnm">FEO CM Attachments</div>
+          <a class="lurl" href="https://drive.google.com/drive/folders/1qFWuq2GGVnSfEndbU9az9M6hr1FVnIBS" target="_blank">Open folder <i class="ti ti-external-link" style="font-size:11px"></i></a>
+        </div>
+      </div>
+      <div class="lrow">
+        <div class="lic sh"><i class="ti ti-table-filled"></i></div>
+        <div style="flex:1">
+          <div class="llbl">Google Sheets</div>
+          <div class="lnm">FEO CM Records 2026</div>
+          <a class="lurl" href="https://docs.google.com/spreadsheets/d/1u7bNM4MGAO9VbBbkVs60YZhayqYrnv3xbBOA-DMGPQA/edit" target="_blank">Open spreadsheet <i class="ti ti-external-link" style="font-size:11px"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="sh" style="margin-top:24px;"><span class="sh-pill">🕐 Session Log</span><div class="sh-line"></div></div>
+    <div class="card">
+      <div style="font-size:12px;color:var(--text-muted);padding:10px 0;text-align:center;" id="log-empty">No entries recorded yet this session.</div>
+      <div id="log-list"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+var WEB_APP='https://script.google.com/macros/s/AKfycbx1lpOoi3yHY7LnZ6qzthi8LLoaP1VYUrn43EFtimFg2hz24FOjfKmNOzA_XDkz91yj/exec';
+var ins=[],maj=[],wst='',gcVal='',afiles=[],cnt=0,uploadedNames=[],uploadedUrls=[];
+var materials=[];
+var cats={before:{files:[],names:[],urls:[]},after:{files:[],names:[],urls:[]}};
+
+function goTab(t){
+  var keys=['form','links'];
+  document.querySelectorAll('.tab').forEach(function(b,i){b.classList.toggle('on',keys[i]===t);});
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('on');});
+  document.getElementById('p-'+t).classList.add('on');
+}
+function tog(el){
+  var v=el.getAttribute('data-v'),arr=el.classList.contains('ins')?ins:maj,idx=arr.indexOf(v);
+  if(idx>-1){arr.splice(idx,1);el.classList.remove('on');}else{arr.push(v);el.classList.add('on');}
+}
+function pickSt(label,key){
+  wst=label;
+  ['p','i','c'].forEach(function(k){document.getElementById('st-'+k).classList.remove('on');});
+  document.getElementById('st-'+key).classList.add('on');
+}
+function pickGC(val){
+  gcVal=val;
+  document.getElementById('gc-yes').classList.toggle('on',val==='Yes');
+  document.getElementById('gc-no').classList.toggle('on',val==='No');
+}
+function addMaterial(){
+  var name=gv('m-name'),qty=gv('m-qty');
+  if(!name){showAlert('err','ti-alert-circle','Enter a material name.');return;}
+  materials.push({name:name,qty:qty||'—'});
+  document.getElementById('m-name').value='';
+  document.getElementById('m-qty').value='';
+  document.getElementById('m-name').focus();
+  renderMaterials();
+}
+function rmMaterial(i){materials.splice(i,1);renderMaterials();}
+function renderMaterials(){
+  var ul=document.getElementById('mlist');ul.innerHTML='';
+  materials.forEach(function(m,i){
+    var d=document.createElement('div');d.className='fitem';
+    d.innerHTML='<i class="ti ti-package fic"></i>'
+      +'<span class="fnm">'+m.name+'</span>'
+      +'<span class="fsz">'+m.qty+'</span>'
+      +'<i class="ti ti-x frm" onclick="rmMaterial('+i+')" aria-label="Remove"></i>';
+    ul.appendChild(d);
+  });
+}
+// ---- Lat/Long -> Grid ID (R####_C####) ----
+// UTM Zone 51N (EPSG:32651) forward projection, Snyder's transverse Mercator formulas.
+// Grid origin derived from Tarlac_GRID_APRIL.kmz (65 known grid boxes, validated
+// to 100% round-trip accuracy incl. 1,300 random in-box sample points):
+//   Easting  = -548250 + 500 * C
+//   Northing = 2443750 - 500 * R
+function latLonToUTM51N(lat,lon){
+  var a=6378137.0,f=1/298.257223563,k0=0.9996;
+  var e2=f*(2-f),e4=e2*e2,e6=e4*e2,ep2=e2/(1-e2);
+  var latRad=lat*Math.PI/180,lonRad=lon*Math.PI/180;
+  var lonOrigin=123*Math.PI/180; // zone 51 central meridian
+  var Nc=a/Math.sqrt(1-e2*Math.sin(latRad)*Math.sin(latRad));
+  var T=Math.tan(latRad)*Math.tan(latRad);
+  var C=ep2*Math.cos(latRad)*Math.cos(latRad);
+  var A=Math.cos(latRad)*(lonRad-lonOrigin);
+  var M=a*((1-e2/4-3*e4/64-5*e6/256)*latRad
+        -(3*e2/8+3*e4/32+45*e6/1024)*Math.sin(2*latRad)
+        +(15*e4/256+45*e6/1024)*Math.sin(4*latRad)
+        -(35*e6/3072)*Math.sin(6*latRad));
+  var easting=k0*Nc*(A+(1-T+C)*Math.pow(A,3)/6
+        +(5-18*T+T*T+72*C-58*ep2)*Math.pow(A,5)/120)+500000.0;
+  var northing=k0*(M+Nc*Math.tan(latRad)*(A*A/2
+        +(5-T+9*C+4*C*C)*Math.pow(A,4)/24
+        +(61-58*T+T*T+600*C-330*ep2)*Math.pow(A,6)/720));
+  return {e:easting,n:northing};
+}
+function coordsToGrid(lat,lon){
+  var u=latLonToUTM51N(lat,lon);
+  var c=Math.round((u.e+548250.0)/500.0);
+  var r=Math.round((2443750.0-u.n)/500.0);
+  if(r<0||c<0||r>9999||c>9999) return null;
+  var pad=function(n){var s=''+n;while(s.length<4)s='0'+s;return s;};
+  return 'R'+pad(r)+'_C'+pad(c);
+}
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function useGridSuggestion(code){document.getElementById('f-grid').value=code;}
+function useMyLocation(){
+  var btn=document.getElementById('geo-btn'),ic=document.getElementById('geo-ic'),note=document.getElementById('geo-note');
+  if(!navigator.geolocation){
+    note.style.display='block';note.style.color='var(--red)';
+    note.textContent='Location isn\u2019t supported on this browser \u2014 enter coordinates manually.';
+    return;
+  }
+  btn.disabled=true;ic.className='ti ti-loader-2';
+  note.style.display='block';note.style.color='var(--text-muted)';
+  note.textContent='Requesting location \u2014 your browser will ask for permission…';
+  navigator.geolocation.getCurrentPosition(
+    function(pos){
+      var lat=pos.coords.latitude,lon=pos.coords.longitude;
+      document.getElementById('f-lat').value=lat.toFixed(6);
+      document.getElementById('f-lng').value=lon.toFixed(6);
+      btn.disabled=false;ic.className='ti ti-current-location';
+      note.style.color='var(--green)';
+      var msg='Location filled in \u00b1'+Math.round(pos.coords.accuracy)+'m accuracy.';
+      var gridCode=coordsToGrid(lat,lon);
+      var gridField=document.getElementById('f-grid');
+      if(gridCode){
+        var current=gridField.value.trim();
+        if(!current){
+          gridField.value=gridCode;
+          msg+=' Grid ID set to '+gridCode+' from GPS \u2014 please double-check it.';
+        }else if(current!==gridCode){
+          msg+=' GPS suggests '+gridCode+' \u2014 <a href="#" onclick="useGridSuggestion(\''+gridCode+'\');return false;" style="color:var(--navy);text-decoration:underline;">use it</a> instead of "'+escHtml(current)+'"?';
+        }
+      }
+      note.innerHTML=msg;
+    },
+    function(err){
+      btn.disabled=false;ic.className='ti ti-current-location';
+      note.style.color='var(--red)';
+      note.textContent=err.code===1
+        ?'Permission denied \u2014 allow location access in your browser to use this, or enter coordinates manually.'
+        :'Couldn\u2019t get your location \u2014 enter coordinates manually.';
+    },
+    {enableHighAccuracy:true,timeout:12000,maximumAge:0}
+  );
+}
+function dzOv(e){e.preventDefault();document.getElementById('dz').classList.add('drag');}
+function dzOut(){document.getElementById('dz').classList.remove('drag');}
+function dzDp(e){e.preventDefault();dzOut();addFiles(e.dataTransfer.files);}
+function addFiles(fl){
+  for(var i=0;i<fl.length;i++){
+    var f=fl[i];
+    if(f.size>10485760){showAlert('err','ti-alert-circle',f.name+' exceeds 10 MB.');continue;}
+    if(!afiles.some(function(x){return x.name===f.name;})) afiles.push(f);
+  }
+  renderFiles();
+}
+function rmFile(i){afiles.splice(i,1);renderFiles();}
+function renderFiles(){
+  var ul=document.getElementById('flist');ul.innerHTML='';
+  afiles.forEach(function(f,i){
+    var ext=(f.name.split('.').pop()||'').toLowerCase();
+    var ic=['doc','docx'].indexOf(ext)>-1?'ti-file-type-doc':['xls','xlsx'].indexOf(ext)>-1?'ti-file-type-xls':ext==='pdf'?'ti-file-type-pdf':'ti-photo';
+    var sz=f.size>1048576?(f.size/1048576).toFixed(1)+' MB':(f.size/1024).toFixed(0)+' KB';
+    var nameIdx=uploadedNames.indexOf(f.name);
+    var already=nameIdx>-1;
+    var fileUrl=already&&uploadedUrls[nameIdx]?uploadedUrls[nameIdx]:'';
+    var d=document.createElement('div');d.className='fitem';d.id='fitem-'+i;
+    d.innerHTML='<i class="ti '+ic+' fic"></i>'
+      +'<span class="fnm">'+f.name+'</span>'
+      +'<span class="fsz">'+sz+'</span>'
+      +(already
+        ?'<span class="fstat done"><i class="ti ti-check"></i> Uploaded</span>'
+          +(fileUrl?'<a class="flink" href="'+fileUrl+'" target="_blank" title="Open in Drive"><i class="ti ti-external-link"></i></a>':'')
+        :'<i class="ti ti-x frm" onclick="rmFile('+i+')" aria-label="Remove"></i>');
+    ul.appendChild(d);
+  });
+}
+function setFitemStatus(i,status,html){
+  var item=document.getElementById('fitem-'+i);if(!item)return;
+  var old=item.querySelector('.fstat,.frm,.flink');if(old)old.remove();
+  var span=document.createElement('span');span.className='fstat '+status;span.innerHTML=html;
+  item.appendChild(span);
+  if(status==='uploading'){
+    var pw=document.createElement('div');pw.className='prog-wrap';
+    var pb=document.createElement('div');pb.className='prog-bar';pb.id='prog-'+i;pb.style.width='0%';
+    pw.appendChild(pb);item.after(pw);
+    var pct=0;var iv=setInterval(function(){pct=Math.min(pct+10,85);var el=document.getElementById('prog-'+i);if(el)el.style.width=pct+'%';},200);item._iv=iv;
+  } else {
+    var pw2=item.nextSibling;if(pw2&&pw2.className==='prog-wrap')pw2.remove();if(item._iv)clearInterval(item._iv);
+  }
+}
+function dzOvCat(e,cat){e.preventDefault();document.getElementById('dz-'+cat).classList.add('drag');}
+function dzOutCat(cat){document.getElementById('dz-'+cat).classList.remove('drag');}
+function dzDpCat(e,cat){e.preventDefault();dzOutCat(cat);addFilesCat(cat,e.dataTransfer.files);}
+function addFilesCat(cat,fl){
+  var bucket=cats[cat];
+  for(var i=0;i<fl.length;i++){
+    var f=fl[i];
+    if(f.size>10485760){showAlert('err','ti-alert-circle',f.name+' exceeds 10 MB.');continue;}
+    if(!bucket.files.some(function(x){return x.name===f.name;})) bucket.files.push(f);
+  }
+  renderFilesCat(cat);
+}
+function rmFileCat(cat,i){cats[cat].files.splice(i,1);renderFilesCat(cat);}
+function renderFilesCat(cat){
+  var bucket=cats[cat];
+  var ul=document.getElementById('flist-'+cat);ul.innerHTML='';
+  bucket.files.forEach(function(f,i){
+    var sz=f.size>1048576?(f.size/1048576).toFixed(1)+' MB':(f.size/1024).toFixed(0)+' KB';
+    var nameIdx=bucket.names.indexOf(f.name);
+    var already=nameIdx>-1;
+    var fileUrl=already&&bucket.urls[nameIdx]?bucket.urls[nameIdx]:'';
+    var d=document.createElement('div');d.className='fitem';d.id='fitem-'+cat+'-'+i;
+    d.innerHTML='<i class="ti ti-photo fic"></i>'
+      +'<span class="fnm">'+f.name+'</span>'
+      +'<span class="fsz">'+sz+'</span>'
+      +(already
+        ?'<span class="fstat done"><i class="ti ti-check"></i> Uploaded</span>'
+          +(fileUrl?'<a class="flink" href="'+fileUrl+'" target="_blank" title="Open in Drive"><i class="ti ti-external-link"></i></a>':'')
+        :'<i class="ti ti-x frm" onclick="rmFileCat(\''+cat+'\','+i+')" aria-label="Remove"></i>');
+    ul.appendChild(d);
+  });
+}
+function setFitemStatusCat(cat,i,status,html){
+  var item=document.getElementById('fitem-'+cat+'-'+i);if(!item)return;
+  var old=item.querySelector('.fstat,.frm,.flink');if(old)old.remove();
+  var span=document.createElement('span');span.className='fstat '+status;span.innerHTML=html;
+  item.appendChild(span);
+  if(status==='uploading'){
+    var pw=document.createElement('div');pw.className='prog-wrap';
+    var pb=document.createElement('div');pb.className='prog-bar';pb.id='prog-'+cat+'-'+i;pb.style.width='0%';
+    pw.appendChild(pb);item.after(pw);
+    var pct=0;var iv=setInterval(function(){pct=Math.min(pct+10,85);var el=document.getElementById('prog-'+cat+'-'+i);if(el)el.style.width=pct+'%';},200);item._iv=iv;
+  } else {
+    var pw2=item.nextSibling;if(pw2&&pw2.className==='prog-wrap')pw2.remove();if(item._iv)clearInterval(item._iv);
+  }
+}
+function fileToBase64(file){
+  return new Promise(function(resolve,reject){var r=new FileReader();r.onload=function(){resolve(r.result.split(',')[1]);};r.onerror=reject;r.readAsDataURL(file);});
+}
+function setSubStatus(msg){
+  var el=document.getElementById('sub-status');
+  el.className='alert show info';
+  el.innerHTML='<i class="ti ti-loader-2"></i><span>'+msg+'</span>';
+}
+function clearSubStatus(){document.getElementById('sub-status').className='alert';}
+function setLoading(on){
+  var btn=document.getElementById('btn-sub');btn.disabled=on;
+  document.getElementById('spin').classList.toggle('show',on);
+  document.getElementById('sub-ico').style.display=on?'none':'';
+  document.getElementById('sub-lbl').textContent=on?'Saving…':'Save CM Entry';
+}
+function gv(id){return(document.getElementById(id).value||'').trim();}
+function showAlert(type,ico,msg){
+  var a=document.getElementById('alert');
+  a.className='alert show '+type;
+  a.innerHTML='<i class="ti '+ico+'"></i><span>'+msg+'</span>';
+}
+function clearAll(){
+  ['f-date','f-grid','f-terr','f-tech','f-audit','f-redline','f-cmdate','f-remarks','f-gridmonth','f-coordinator','f-teamleader','f-dispatch','f-nearestsite','f-location','f-lat','f-lng','m-name','m-qty'].forEach(function(id){document.getElementById(id).value='';});
+  ins=[];maj=[];wst='';gcVal='';afiles=[];uploadedNames=[];uploadedUrls=[];
+  materials=[];
+  cats={before:{files:[],names:[],urls:[]},after:{files:[],names:[],urls:[]}};
+  document.querySelectorAll('.pill').forEach(function(p){p.classList.remove('on');});
+  document.querySelectorAll('.sbtn').forEach(function(s){s.classList.remove('on');});
+  document.getElementById('gc-yes').classList.remove('on');
+  document.getElementById('gc-no').classList.remove('on');
+  document.getElementById('flist').innerHTML='';
+  document.getElementById('mlist').innerHTML='';
+  document.getElementById('flist-before').innerHTML='';
+  document.getElementById('flist-after').innerHTML='';
+  document.getElementById('geo-note').style.display='none';
+  document.getElementById('alert').className='alert';
+  clearSubStatus();
+}
+function addToLog(r){
+  cnt++;
+  document.getElementById('ecnt').innerHTML='<i class="ti ti-database" style="font-size:11px"></i> '+cnt+(cnt===1?' entry':' entries');
+  document.getElementById('log-empty').style.display='none';
+  var ll=document.getElementById('log-list');
+  var bk=r.status==='Completed'?'c':r.status==='In Progress'?'i':'p';
+  var d=document.createElement('div');d.className='logitem';
+  d.innerHTML='<div><div class="log-g">'+r.grid+' — '+r.terr+'</div><div class="log-m">'+r.tech+' · '+r.date+(r.gridmonth?' · '+r.gridmonth:'')+'</div></div><span class="lbadge '+bk+'">'+(r.status||'—')+'</span>';
+  ll.insertBefore(d,ll.firstChild);
+}
+
+async function doSubmit(){
+  var date=gv('f-date'),grid=gv('f-grid'),terr=gv('f-terr'),tech=gv('f-tech');
+  if(!date||!grid||!terr||!tech){showAlert('err','ti-alert-circle','Please fill in Date, Grid, Territory, and Tech Name.');return;}
+
+  setLoading(true);
+  document.getElementById('alert').className='alert';
+
+  // STEP 1 — Upload files
+  var filesToUpload=afiles.filter(function(f){return uploadedNames.indexOf(f.name)===-1;});
+  if(filesToUpload.length){
+    setSubStatus('Uploading '+filesToUpload.length+' file(s) to Google Drive…');
+    for(var i=0;i<afiles.length;i++){
+      if(uploadedNames.indexOf(afiles[i].name)>-1) continue;
+      setFitemStatus(i,'uploading','<i class="ti ti-loader-2"></i> Uploading…');
+      try{
+        var b64=await fileToBase64(afiles[i]);
+        var resp=await fetch(WEB_APP,{
+          method:'POST',
+          headers:{'Content-Type':'text/plain'},
+          body:JSON.stringify({action:'uploadFile',fileName:afiles[i].name,mimeType:afiles[i].type||'application/octet-stream',fileData:b64})
+        });
+        var result=await resp.json();
+        if(!result.success) throw new Error(result.error||'Upload failed');
+        uploadedNames.push(afiles[i].name);
+        uploadedUrls.push(result.fileUrl||'');
+        var doneHtml='<i class="ti ti-check"></i> Uploaded'
+          +(result.fileUrl?'</span><a class="flink" href="'+result.fileUrl+'" target="_blank" title="Open in Drive"><i class="ti ti-external-link"></i></a':'');
+        setFitemStatus(i,'done',doneHtml);
+      }catch(err){
+        setFitemStatus(i,'fail','<i class="ti ti-x"></i> Failed');
+        console.error('Upload error:',err);
+      }
+    }
+  }
+
+  // STEP 1b — Upload before/after photos
+  for(var ci=0;ci<2;ci++){
+    var cat=ci===0?'before':'after';
+    var bucket=cats[cat];
+    var catToUpload=bucket.files.filter(function(f){return bucket.names.indexOf(f.name)===-1;});
+    if(!catToUpload.length) continue;
+    setSubStatus('Uploading '+catToUpload.length+' '+cat+' photo(s) to Google Drive…');
+    for(var bi=0;bi<bucket.files.length;bi++){
+      if(bucket.names.indexOf(bucket.files[bi].name)>-1) continue;
+      setFitemStatusCat(cat,bi,'uploading','<i class="ti ti-loader-2"></i> Uploading…');
+      try{
+        var bb64=await fileToBase64(bucket.files[bi]);
+        var bresp=await fetch(WEB_APP,{
+          method:'POST',
+          headers:{'Content-Type':'text/plain'},
+          body:JSON.stringify({action:'uploadFile',fileName:bucket.files[bi].name,mimeType:bucket.files[bi].type||'application/octet-stream',fileData:bb64,category:cat})
+        });
+        var bresult=await bresp.json();
+        if(!bresult.success) throw new Error(bresult.error||'Upload failed');
+        bucket.names.push(bucket.files[bi].name);
+        bucket.urls.push(bresult.fileUrl||'');
+        var bdoneHtml='<i class="ti ti-check"></i> Uploaded'
+          +(bresult.fileUrl?'</span><a class="flink" href="'+bresult.fileUrl+'" target="_blank" title="Open in Drive"><i class="ti ti-external-link"></i></a':'');
+        setFitemStatusCat(cat,bi,'done',bdoneHtml);
+      }catch(err){
+        setFitemStatusCat(cat,bi,'fail','<i class="ti ti-x"></i> Failed');
+        console.error('Upload error ('+cat+'):',err);
+      }
+    }
+  }
+
+  // STEP 2 — Log to Sheet
+  setSubStatus('Saving entry to Google Sheets…');
+  var gridmonth=gv('f-gridmonth');
+  var payload={
+    action:'logEntry',
+    timestamp:new Date().toLocaleString('en-PH',{timeZone:'Asia/Manila'}),
+    date:date,grid:grid,territory:terr,tech:tech,
+    gridMonth:gridmonth||'—',
+    googleCircuit:gcVal||'—',
+    coordinator:gv('f-coordinator')||'—',
+    teamLeader:gv('f-teamleader')||'—',
+    dispatchedBy:gv('f-dispatch')||'—',
+    nearestSite:gv('f-nearestsite')||'—',
+    location:gv('f-location')||'—',
+    latitude:gv('f-lat')||'—',
+    longitude:gv('f-lng')||'—',
+    auditDate:gv('f-audit')||'—',redlineDate:gv('f-redline')||'—',cmDate:gv('f-cmdate')||'—',
+    status:wst||'—',
+    inscope:ins.length?ins.join(' | '):'—',
+    major:maj.length?maj.join(' | '):'—',
+    materials:materials.length?materials.map(function(m){return m.name+' - '+m.qty;}).join(' | '):'—',
+    remarks:gv('f-remarks')||'—',
+    beforePhotos:cats.before.names.length?cats.before.names.join(', '):'—',
+    beforePhotoLinks:cats.before.urls.length?cats.before.urls.join(', '):'—',
+    afterPhotos:cats.after.names.length?cats.after.names.join(', '):'—',
+    afterPhotoLinks:cats.after.urls.length?cats.after.urls.join(', '):'—',
+    attachments:uploadedNames.length?uploadedNames.join(', '):'—',
+    attachmentLinks:uploadedUrls.length?uploadedUrls.join(', '):'—'
+  };
+  console.log('PAYLOAD attachmentLinks:',payload.attachmentLinks);
+
+  try{
+    var sresp=await fetch(WEB_APP,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)});
+    var sresult=await sresp.json();
+    if(!sresult.success) throw new Error(sresult.error||'Sheet write failed');
+    clearSubStatus();setLoading(false);
+    var failedCount=afiles.length-uploadedNames.length;
+    if(failedCount>0){
+      showAlert('warn','ti-alert-triangle','Entry saved — but '+failedCount+' file(s) failed to upload.');
+    } else {
+      showAlert('ok','ti-circle-check','CM entry saved!'+(uploadedNames.length?' '+uploadedNames.length+' file(s) uploaded to Drive.':''));
+    }
+    addToLog({grid:grid,terr:terr,tech:tech,date:date,status:wst,gridmonth:gridmonth});
+    clearAll();
+  }catch(e){
+    clearSubStatus();setLoading(false);
+    showAlert('err','ti-alert-circle','Could not save to Google Sheets. Check your connection.');
+    console.error('Sheet error:',e);
+  }
+}
+window.addEventListener('DOMContentLoaded',function(){
+  // Auto-request the technician's location as soon as the form loads.
+  // The browser still shows its own permission prompt the first time —
+  // this only fills the fields if that prompt is accepted.
+  useMyLocation();
+});
+</script>
